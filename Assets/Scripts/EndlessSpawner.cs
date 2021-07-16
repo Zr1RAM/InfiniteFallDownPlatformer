@@ -14,11 +14,13 @@ public class EndlessSpawner : MonoBehaviour
     public Vector3 nextSpawnLocation;
     public static EndlessSpawner endlessSpawnerManager;
     Transform[] Tiles;
+    RingsSpawner RingsManager;
     void Start()
     {
         if(endlessSpawnerManager == null)
         {
             endlessSpawnerManager = this;
+            RingsManager = FindObjectOfType<RingsSpawner>();
         }
         SpawnTile();
     }
@@ -28,6 +30,7 @@ public class EndlessSpawner : MonoBehaviour
         Tiles = new Transform[NumberOfEndlessTiles];
         Tiles[0] = Instantiate(CylinderTile, StartingTilePosition, Quaternion.identity).transform;
         Tiles[0].SetParent(transform, true);
+        RingsManager.SpawnRings(Tiles[0]);
 #if UNITY_EDITOR
         Tiles[0].name = "Tiles1";
 #endif
@@ -39,6 +42,7 @@ public class EndlessSpawner : MonoBehaviour
             newSpawnPosition = new Vector3(newSpawnPosition.x,newSpawnPosition.y + SpawnHeightDistance * 2, newSpawnPosition.z);
             Tiles[i] = Instantiate(CylinderTile, newSpawnPosition, Quaternion.identity).transform;
             Tiles[i].SetParent(transform, true);
+            RingsManager.SpawnRings(Tiles[i]);
 #if UNITY_EDITOR
             Tiles[i].name = "Tiles" + (i+1).ToString();
 #endif
@@ -53,14 +57,16 @@ public class EndlessSpawner : MonoBehaviour
         if(TileSwapSwitch)
         {
             Tiles[1].position = new Vector3(Tiles[0].position.x,Tiles[0].position.y - (SpawnHeightDistance * 2), Tiles[0].position.z);
+            Tiles[1].GetChild(0).gameObject.SetActive(true);
         }
         else
         {
             Tiles[0].position = new Vector3(Tiles[1].position.x, Tiles[1].position.y - (SpawnHeightDistance * 2), Tiles[1].position.z);
+            Tiles[0].GetChild(0).gameObject.SetActive(true);
         }
     }
 
-// Just to test if swaplasttileposition works as intended
+// Just to test if swapLastTileposition works as intended
 #if UNITY_EDITOR
     void Update()
     {
@@ -70,4 +76,8 @@ public class EndlessSpawner : MonoBehaviour
         }
     }
 #endif
+    public void TurnEndlessPipe(float val)
+    {
+        transform.Rotate(0, val, 0);
+    }
 }

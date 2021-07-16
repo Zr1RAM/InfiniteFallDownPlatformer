@@ -9,6 +9,7 @@ public class NextLocationSpawner : MonoBehaviour
         if(other.tag == "Player")
         {
             EndlessSpawner.endlessSpawnerManager.SwapLastTilePosition();
+            gameObject.SetActive(false);
         }
     }
 }
